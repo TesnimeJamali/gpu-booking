@@ -7,10 +7,10 @@ TP1 – Processus unifié et approches agiles (INSAT).
 | Rôle | Membre |
 |---|---|
 | P1 – Pilote du processus | Tesnime Jamali |
-| P2 – Base de données et CI | ... |
-| P3 – Backend UC02 | ... |
-| P4 – Tests et qualité | ... |
-| P5 – UML et documentation | ... |
+| P2 – Base de données et CI | Eya Bargouth |
+| P3 – Backend UC02 | Emna Helali |
+| P4 – Tests et qualité | Mariem El Abed |
+| P5 – UML et documentation | Mayssa El Hawat |
 
 ## Règles de travail
 1. `main` reste toujours vert : la CI doit passer.
