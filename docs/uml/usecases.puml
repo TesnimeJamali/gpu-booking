@@ -1,0 +1,25 @@
+@startuml
+left to right direction
+actor Utilisateur
+actor Administrateur
+actor "Système de notification" as Notif
+rectangle "Réservation de créneaux GPU" {
+  usecase "UC01 Consulter la disponibilité" as UC01
+  usecase "UC02 Réserver un créneau" as UC02
+  usecase "UC03 Annuler une réservation" as UC03
+  usecase "UC04 Recevoir rappels et alertes" as UC04
+  usecase "UC05 Libérer automatiquement\nun créneau non démarré" as UC05
+  usecase "UC06 Gérer quotas et statistiques" as UC06
+}
+Utilisateur --> UC01
+Utilisateur --> UC02
+Utilisateur --> UC05
+Administrateur --> UC06
+UC04 --> Notif
+UC05 --> Notif
+
+UC03 .> UC02 : <<extend>>
+UC02 .> UC04 : <<include>>
+
+
+@enduml
