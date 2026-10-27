@@ -1,0 +1,23 @@
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: gpu
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      # Ces scripts s'exécutent une seule fois, à la première création du volume
+      - ./sql/schema.sql:/docker-entrypoint-initdb.d/1_schema.sql:ro
+      - ./sql/seed.sql:/docker-entrypoint-initdb.d/2_seed.sql:ro
+      - ./docker/init-test-db.sql:/docker-entrypoint-initdb.d/3_test_db.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d gpu"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  pgdata:
