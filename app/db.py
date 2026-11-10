@@ -1,10 +1,12 @@
+"""Connexion à PostgreSQL."""
+
 import os
 
 import psycopg
 from psycopg.rows import DictRow, dict_row
 
 
-def get_database_url() -> str:
+def database_url() -> str:
     url = os.environ.get("DATABASE_URL")
     if not url:
         raise RuntimeError(
@@ -15,4 +17,4 @@ def get_database_url() -> str:
 
 def get_connection() -> psycopg.Connection[DictRow]:
     """Ouvre une nouvelle connexion. Les lignes sont renvoyées sous forme de dict."""
-    return psycopg.connect(get_database_url(), row_factory=dict_row)
+    return psycopg.connect(database_url(), row_factory=dict_row)

@@ -6,17 +6,16 @@ from pydantic import AwareDatetime, BaseModel, model_validator
 
 
 class ReservationCreate(BaseModel):
-    """Corps de la requête POST /reservations."""
+    """Corps de la requête POST /reservations (l'utilisateur est dans X-User-Id)."""
 
-    user_id: int
     gpu_id: int
-    debut: AwareDatetime
-    fin: AwareDatetime
+    start: AwareDatetime
+    end: AwareDatetime
 
     @model_validator(mode="after")
     def verifier_ordre(self):
-        if self.fin <= self.debut:
-            raise ValueError("fin doit être strictement après debut")
+        if self.end <= self.start:
+            raise ValueError("end doit être strictement après start")
         return self
 
 
@@ -26,6 +25,6 @@ class ReservationOut(BaseModel):
     id: int
     user_id: int
     gpu_id: int
-    debut: datetime
-    fin: datetime
+    start: datetime
+    end: datetime
     status: str

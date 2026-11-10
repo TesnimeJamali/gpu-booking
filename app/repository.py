@@ -7,7 +7,7 @@ from app.db import get_connection
 
 
 def inserer(
-    user_id: int, gpu_id: int, debut: datetime, fin: datetime
+    user_id: int, gpu_id: int, start: datetime, end: datetime
 ) -> dict[str, Any]:
     """Insère une réservation et renvoie la ligne créée.
 
@@ -20,9 +20,9 @@ def inserer(
             INSERT INTO reservation (user_id, gpu_id, start_at, end_at)
             VALUES (%s, %s, %s, %s)
             RETURNING id, user_id, gpu_id,
-                      start_at AS debut, end_at AS fin, status
+                      start_at AS "start", end_at AS "end", status
             """,
-            (user_id, gpu_id, debut, fin),
+            (user_id, gpu_id, start, end),
         ).fetchone()
 
     if row is None:

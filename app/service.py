@@ -9,13 +9,13 @@ from app.errors import CreneauIndisponible, DonneesInvalides
 from app.schemas import ReservationCreate
 
 
-def creer_reservation(data: ReservationCreate) -> dict[str, Any]:
+def creer_reservation(user_id: int, data: ReservationCreate) -> dict[str, Any]:
     try:
         return repository.inserer(
-            user_id=data.user_id,
+            user_id=user_id,
             gpu_id=data.gpu_id,
-            debut=data.debut,
-            fin=data.fin,
+            start=data.start,
+            end=data.end,
         )
     except ExclusionViolation:
         raise CreneauIndisponible(
