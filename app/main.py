@@ -2,10 +2,11 @@
 
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
-
+from app.controller import router as reservations_router
 from app.errors import CreneauIndisponible, DonneesInvalides
 
 app = FastAPI(title="gpu-booking")
+app.include_router(reservations_router)
 
 
 @app.exception_handler(CreneauIndisponible)

@@ -1,10 +1,6 @@
-"""Logique métier de la réservation d'un créneau."""
+from psycopg.errors import ExclusionViolation, ForeignKeyViolation
 
-from psycopg.errors import ExclusionViolation
-
-from app import repository
-from app.errors import CreneauIndisponible
-from app.schemas import ReservationCreate
+from app.errors import CreneauIndisponible, DonneesInvalides
 
 
 def creer_reservation(data: ReservationCreate) -> dict:
@@ -19,3 +15,5 @@ def creer_reservation(data: ReservationCreate) -> dict:
         raise CreneauIndisponible(
             "Ce créneau chevauche une réservation existante"
         ) from None
+    except ForeignKeyViolation:
+        raise DonneesInvalides("Utilisateur ou GPU inexistant") from None
