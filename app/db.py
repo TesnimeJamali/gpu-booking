@@ -1,9 +1,7 @@
-"""Connexion à PostgreSQL."""
-
 import os
 
 import psycopg
-from psycopg.rows import dict_row
+from psycopg.rows import DictRow, dict_row
 
 
 def get_database_url() -> str:
@@ -15,6 +13,6 @@ def get_database_url() -> str:
     return url
 
 
-def get_connection() -> psycopg.Connection:
+def get_connection() -> psycopg.Connection[DictRow]:
     """Ouvre une nouvelle connexion. Les lignes sont renvoyées sous forme de dict."""
     return psycopg.connect(get_database_url(), row_factory=dict_row)

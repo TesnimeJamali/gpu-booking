@@ -1,9 +1,15 @@
+"""Logique métier de la réservation d'un créneau."""
+
+from typing import Any
+
 from psycopg.errors import ExclusionViolation, ForeignKeyViolation
 
+from app import repository
 from app.errors import CreneauIndisponible, DonneesInvalides
+from app.schemas import ReservationCreate
 
 
-def creer_reservation(data: ReservationCreate) -> dict:
+def creer_reservation(data: ReservationCreate) -> dict[str, Any]:
     try:
         return repository.inserer(
             user_id=data.user_id,
