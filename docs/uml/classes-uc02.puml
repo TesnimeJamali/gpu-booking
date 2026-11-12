@@ -1,0 +1,89 @@
+@startuml classes-uc02
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+
+package "app/main.py" {
+  class "FastAPI" as FastAPIApp <<application>> {
+    +include_router(...)
+  }
+  class "creneau_indisponible_handler()" as CreneauHandler <<exception_handler>> {
+    +handler(request, exc): 409
+  }
+  class "donnees_invalides_handler()" as DonneesHandler <<exception_handler>> {
+    +handler(request, exc): 422
+  }
+}
+
+package "app/controller.py" {
+  class "creer()" as Controller <<POST /reservations>> {
+    +creer(data: ReservationCreate, x_user_id: int, service): ReservationOut
+  }
+}
+
+package "app/schemas.py" {
+  class ReservationCreate {
+    +gpu_id: int
+    +start: AwareDatetime
+    +end: AwareDatetime
+    +verifier_ordre()
+  }
+  class ReservationOut {
+    +id: int
+    +user_id: int
+    +gpu_id: int
+    +start: datetime
+    +end: datetime
+    +status: str
+  }
+}
+
+package "app/services/reservation_service.py" {
+  class ReservationService {
+    -_repository: ReservationRepository
+    -_maintenant: Callable[[], datetime]
+    +DUREE_MAX: timedelta = 8h
+    +__init__(repository, maintenant)
+    +creer_reservation(user_id, gpu_id, start, end): Reservation
+  }
+}
+
+package "app/repositories/reservation_repository.py" {
+  class ReservationRepository {
+    +inserer(user_id, gpu_id, start, end): Reservation
+  }
+}
+
+package "app/models.py" {
+  class Reservation <<entité>> {
+    +id: int
+    +user_id: int
+    +gpu_id: int
+    +start: datetime
+    +end: datetime
+    +status: str
+  }
+}
+
+package "app/errors.py" {
+  class ReservationError <<Exception>>
+  class CreneauIndisponible
+  class DonneesInvalides
+  ReservationError <|-- CreneauIndisponible
+  ReservationError <|-- DonneesInvalides
+}
+
+FastAPIApp --> Controller : expose la route
+FastAPIApp ..> CreneauHandler : enregistre
+FastAPIApp ..> DonneesHandler : enregistre
+Controller ..> ReservationCreate : reçoit
+Controller ..> ReservationOut : renvoie
+Controller --> ReservationService : utilise
+ReservationService --> ReservationRepository : utilise
+ReservationRepository ..> Reservation : crée
+ReservationService ..> Reservation : retourne
+ReservationService ..> DonneesInvalides : lève (règles métier)
+ReservationRepository ..> CreneauIndisponible : lève (ExclusionViolation)
+ReservationRepository ..> DonneesInvalides : lève (ForeignKeyViolation)
+CreneauHandler ..> CreneauIndisponible : convertit en 409
+DonneesHandler ..> DonneesInvalides : convertit en 422
+@enduml
