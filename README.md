@@ -19,14 +19,6 @@ TP1 – Processus unifié et approches agiles (INSAT).
    `uc03-annuler-reservation`, `uc04-rappels-alertes`,
    `uc05-liberation-automatique`, `uc06-quotas-statistiques`.
 3. Chaque commit cite son ticket : `UC02: route POST /reservations (#2)`.
-4. Chaque pull request contient `Closes #N` et désigne un relecteur
-   (champ Reviewers). Ce relecteur est une autre personne que l'auteur.
-5. On fusionne seulement si la CI est verte et la PR approuvée.
-6. On ne pousse jamais directement sur `main` (sauf le README et les
-   documents de vision au tout début).
-7. Une carte passe en « En cours » quand on commence, et en « Terminé »
-   à la fusion (automatique avec `Closes #N`).
-
 ## Correspondance UC / tickets
 | UC | Ticket | Branche |
 |---|---|---|
