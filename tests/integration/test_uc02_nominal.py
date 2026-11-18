@@ -31,4 +31,4 @@ def test_postcondition_echec_conflit_5a_aucune_reservation_supplementaire(client
     assert r.status_code == 409
     lignes = conn.execute("SELECT user_id FROM reservation").fetchall()
     assert len(lignes) == 1
-    assert lignes[0]["user_id"] == 1s
+    assert lignes[0]["user_id"] == 1
