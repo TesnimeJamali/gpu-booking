@@ -13,8 +13,7 @@ def test_reservation_nominale(client):
 
 def test_deux_reservations_simultanees_une_seule_reussit(client):
     """LE test du cas à risque : deux utilisateurs visent le même créneau en même temps."""
-    barriere = Barrier(2) #fonctionne comme le départ d’une course : les deux requêtes attendent que l’autre soit prête, puis partent ensemble.
-    
+    barriere = Barrier(2) #oblige les deux requêtes à partir au même instant.
     def appeler(user_id):
         barriere.wait()  # les deux requêtes partent au même instant
         return client.post(
