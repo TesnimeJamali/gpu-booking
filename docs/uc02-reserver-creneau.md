@@ -42,8 +42,6 @@ Réserver un GPU sur un créneau donné, sans chevauchement avec une autre rése
 ## Risque technique
 Double réservation en cas de demandes simultanées : contrainte d'exclusion en base, verrou consultatif par GPU, test de concurrence.
 
-## Hors périmètre (version actuelle)
-- Quota hebdomadaire : prévu par la vision, à ajouter à UC02 ou à traiter avec UC06 selon la décision de l'équipe. Si ajouté, la fiche, les diagrammes, le code et les tests devront être mis à jour dans cet ordre.
 
 ## Traçabilité
 - UML : `docs/uml/classes-uc02.puml`, `docs/uml/sequence-uc02.puml`
