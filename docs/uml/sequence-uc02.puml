@@ -1,0 +1,41 @@
+@startuml sequence-uc02
+actor Client
+participant "main.py\n(handlers)" as Main
+participant "controller.py\ncreer()" as C
+participant ReservationService as S
+participant ReservationRepository as R
+database PostgreSQL as DB
+
+Client -> C : POST /reservations\n(X-User-Id, gpu_id, start, end)
+note right of C : Pydantic valide ReservationCreate\n(end > start, sinon 422)
+C -> S : creer_reservation(user_id, gpu_id, start, end)
+
+alt règle métier violée (fin <= début, début dans le passé, durée > 8 h)
+  S --> C : DonneesInvalides
+  C --> Main : exception remontée
+  Main --> Client : 422
+else données valides
+  S -> R : inserer(user_id, gpu_id, start, end)
+  R -> DB : pg_advisory_xact_lock(1, gpu_id)
+  R -> DB : INSERT INTO reservation ... RETURNING ...
+
+  alt créneau libre (scénario nominal)
+    DB --> R : ligne créée
+    R --> S : Reservation
+    S --> C : Reservation
+    C --> Client : 201 ReservationOut
+  else chevauchement (ExclusionViolation)
+    DB --> R : ExclusionViolation
+    R --> S : CreneauIndisponible
+    S --> C : CreneauIndisponible
+    C --> Main : exception remontée
+    Main --> Client : 409 Conflict
+  else GPU ou utilisateur inexistant (ForeignKeyViolation)
+    DB --> R : ForeignKeyViolation
+    R --> S : DonneesInvalides
+    S --> C : DonneesInvalides
+    C --> Main : exception remontée
+    Main --> Client : 422
+  end
+end
+@enduml
