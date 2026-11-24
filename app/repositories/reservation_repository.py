@@ -5,11 +5,13 @@ from datetime import datetime
 from psycopg.errors import ExclusionViolation, ForeignKeyViolation
 
 from app.db import get_connection
-from app.errors import CreneauIndisponible, DonneesInvalides
+from app.errors import AnnulationImpossible, CreneauIndisponible, DonneesInvalides
 from app.models import Reservation
 
 # Espace de noms du verrou consultatif (évite les collisions avec UC05).
 VERROU_RESERVATION = 1
+
+COLONNES = 'id, user_id, gpu_id, start_at AS "start", end_at AS "end", status'
 
 
 class ReservationRepository:
@@ -29,11 +31,10 @@ class ReservationRepository:
                     (VERROU_RESERVATION, gpu_id),
                 )
                 row = conn.execute(
-                    """
+                    f"""
                     INSERT INTO reservation (user_id, gpu_id, start_at, end_at)
                     VALUES (%s, %s, %s, %s)
-                    RETURNING id, user_id, gpu_id,
-                              start_at AS "start", end_at AS "end", status
+                    RETURNING {COLONNES}
                     """,
                     (user_id, gpu_id, start, end),
                 ).fetchone()
@@ -46,4 +47,28 @@ class ReservationRepository:
 
         if row is None:
             raise RuntimeError("L'insertion n'a renvoyé aucune ligne")
+        return Reservation(**row)
+
+    def trouver(self, reservation_id: int) -> Reservation | None:
+        """Renvoie la réservation, ou None si elle n'existe pas."""
+        with get_connection() as conn:
+            row = conn.execute(
+                f"SELECT {COLONNES} FROM reservation WHERE id = %s",
+                (reservation_id,),
+            ).fetchone()
+        return Reservation(**row) if row else None
+
+    def annuler(self, reservation_id: int) -> Reservation:
+        """Passe la réservation en CANCELLED (seulement si elle est CONFIRMED)."""
+        with get_connection() as conn:
+            row = conn.execute(
+                f"""
+                UPDATE reservation SET status = 'CANCELLED'
+                WHERE id = %s AND status = 'CONFIRMED'
+                RETURNING {COLONNES}
+                """,
+                (reservation_id,),
+            ).fetchone()
+        if row is None:
+            raise AnnulationImpossible("La réservation n'est plus active")
         return Reservation(**row)
