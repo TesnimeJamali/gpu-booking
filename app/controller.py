@@ -25,3 +25,13 @@ def creer(
         x_user_id, data.gpu_id, data.start, data.end
     )
     return ReservationOut(**asdict(reservation))
+
+
+@router.post("/reservations/{reservation_id}/cancel", response_model=ReservationOut)
+def annuler(
+    reservation_id: int,
+    x_user_id: int = Header(),
+    service: ReservationService = Depends(get_reservation_service),
+) -> ReservationOut:
+    reservation = service.annuler_reservation(x_user_id, reservation_id)
+    return ReservationOut(**asdict(reservation))
