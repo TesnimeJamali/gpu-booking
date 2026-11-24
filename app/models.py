@@ -1,4 +1,4 @@
-"""Entités du domaine."""
+"""Entités du domaine (reservation)"""
 
 from dataclasses import dataclass
 from datetime import datetime

@@ -1,4 +1,4 @@
-"""Modèles de données de l'API (requêtes et réponses)."""
+"""Modèles de données de l'API : validation automatique de la requête et forme de la réponse."""
 
 from datetime import datetime
 
